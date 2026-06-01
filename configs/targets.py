@@ -80,6 +80,7 @@ TARGETS: dict[str, dict] = {
         "holdout":    "data/sars_mpro/alignments/test/sars_mpro_test_clade_holdout.fasta",
         "t_evo":      0.5,
         "protein":    True,
+        "esm_filter_delta_per_residue": None,
     },
     "zika_ns3": {
         "alignment":  "data/zika_ns3/alignments/train/zika_ns3_train_aligned.fasta",
