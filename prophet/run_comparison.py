@@ -51,15 +51,22 @@ TABLE2_MODES = [
 
 
 def _build_consensus(alignment_fasta: Path) -> str:
+    """Majority-vote consensus, skipping columns where >50% of sequences have gaps (mirrors Stage 1 gap filter)."""
     records = list(SeqIO.parse(str(alignment_fasta), "fasta"))
     aln = MultipleSeqAlignment(records)
+    N = len(records)
     consensus = ""
     for i in range(aln.get_alignment_length()):
         col = aln[:, i]
         counts: dict[str, int] = {}
+        n_gaps = 0
         for aa in col:
-            if aa not in "-X*.":
+            if aa in "-X*.":
+                n_gaps += 1
+            else:
                 counts[aa] = counts.get(aa, 0) + 1
+        if n_gaps / N > 0.5:
+            continue  # skip gap-heavy columns, same as Stage 1
         consensus += max(counts, key=counts.get) if counts else "X"
     return consensus
 
